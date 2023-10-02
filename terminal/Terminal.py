@@ -1,6 +1,6 @@
 class Terminal:
-    def __init__():
-        pass
+    def __init__(self, client_mqtt):
+        self.client_mqtt = client_mqtt
 
     @staticmethod
     def main_screen():
