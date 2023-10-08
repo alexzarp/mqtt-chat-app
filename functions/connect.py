@@ -3,7 +3,7 @@ import random
 import logging
 from time import sleep
 
-def client_id(): return f'user-{random.randint(0, 1000)}'
+def client_id(): return f'user-{random.randint(0, 99999)}'
 
 def connect_mqtt(broker: str = 'localhost', port: int = 1883):
     def on_connect(client, userdata, flags, rc):
@@ -14,10 +14,10 @@ def connect_mqtt(broker: str = 'localhost', port: int = 1883):
                 Flags: {flags}")
         else:
             print("Failed to connect, return code %d\n", rc)
-    # Set Connecting Client ID
+
     client = mqtt_client.Client(client_id())
-    # client.username_pw_set(username, password)
     client.on_connect = on_connect
+    client.on_disconnect = on_disconnect
     client.connect(broker, port)
     return client
 
