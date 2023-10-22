@@ -4,6 +4,7 @@ from functions.create_group import create_group
 from functions.list_registed_groups import list_registed_groups
 from functions.start_conversation import start_conversation
 
+
 class Terminal:
     def __init__(self, client_mqtt):
         self.client_mqtt = client_mqtt
@@ -13,10 +14,18 @@ class Terminal:
     def main_screen(self):
         system("clear")
         print("O que deseja fazer?")
-        print("1 - Listar destinatários possíveis") # Listagem dos usuários e seus respectivos status (online/offline);
-        print("2 - Criar grupo") # Criação de grupo (caso o grupo não exista, o criador do grupo se autodeclara líder do mesmo).
-        print("3 - Listar grupos cadastrados") # Listagem dos grupos cadastrados: para cada grupo, listar o nome do grupo, líder e demais membros;
-        print("4 - Iniciar uma conversa") # Solicitação de conversa e, para depuração, listagem do histórico de solicitação recebidas,
+        print(
+            "1 - Listar destinatários possíveis"
+        )  # Listagem dos usuários e seus respectivos status (online/offline);
+        print(
+            "2 - Criar grupo"
+        )  # Criação de grupo (caso o grupo não exista, o criador do grupo se autodeclara líder do mesmo).
+        print(
+            "3 - Listar grupos cadastrados"
+        )  # Listagem dos grupos cadastrados: para cada grupo, listar o nome do grupo, líder e demais membros;
+        print(
+            "4 - Iniciar uma conversa"
+        )  # Solicitação de conversa e, para depuração, listagem do histórico de solicitação recebidas,
         # bem como listagem das confirmações de aceitação da solicitação de batepapo (listar, apenas para depuração,
         # a informação do tópico criado para iniciar o bate-papo).
         match self.handle_option(type=int()):
@@ -28,10 +37,14 @@ class Terminal:
                 list_registed_groups()
             case 4:
                 print("Para qual destinatário?: ")
-                topic=self.handle_option(type=str())
+                topic = self.handle_option(type=str())
                 print("Digite a mensagem: \n>>> ")
-                message=self.handle_option(type=str())
-                start_conversation(client_mqtt=self.client_mqtt, topic=topic, message=message)
+                message = self.handle_option(type=str())
+                start_conversation(
+                    client_mqtt=self.client_mqtt,
+                    topic=topic + "_control",
+                    message=message,
+                )
             case _:
                 print("Opção inválida!!")
                 self.main_screen()
@@ -45,7 +58,7 @@ class Terminal:
             case _:
                 print("Tipo inválido!!")
                 self.handle_option(type=type)
-        
+
         try:
             option = self.type(input())
         except ValueError:
