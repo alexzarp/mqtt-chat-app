@@ -42,7 +42,7 @@ class Terminal:
                 message = self.handle_option(type=str())
                 start_conversation(
                     client_mqtt=self.client_mqtt,
-                    topic=topic + "_control",
+                    topic=topic,
                     message=message,
                 )
             case _:
