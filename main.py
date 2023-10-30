@@ -12,10 +12,12 @@ def run():
     subscribe(
         client_mqtt=client_mqtt,
         topic="global_control",
+        on_message=action,
     )
+    print(client_mqtt._client_id)
     subscribe(
         client_mqtt=client_mqtt,
-        topic=client_mqtt._client_id + "_control",
+        topic=client_mqtt._client_id.decode("utf-8") + "_control",
         on_message=action,
     )
 

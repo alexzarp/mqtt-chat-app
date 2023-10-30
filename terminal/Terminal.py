@@ -1,7 +1,8 @@
 from os import system
 from functions.list_destinations import list_destinations
-from functions.create_group import create_group
-from functions.list_registed_groups import list_registed_groups
+
+# from functions.create_group import create_group
+# from functions.list_registed_groups import list_registed_groups
 from functions.start_conversation import start_conversation
 
 
@@ -32,9 +33,11 @@ class Terminal:
             case 1:
                 list_destinations(client_mqtt=self.client_mqtt)
             case 2:
-                create_group()
+                # create_group()
+                pass
             case 3:
-                list_registed_groups()
+                # list_registed_groups()
+                pass
             case 4:
                 print("Para qual destinatário?: ")
                 topic = self.handle_option(type=str())
