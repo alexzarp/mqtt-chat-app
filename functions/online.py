@@ -3,16 +3,12 @@ import json
 from time import sleep
 
 
-def online(client_mqtt, topic="global_control"):
-    payload = json.loads(
-        '{"client": {}}'.format(
-            client_mqtt._client_id,
-        )
+def online(client_mqtt, topic="global_control", online=True):
+    publish(
+        client_mqtt=client_mqtt,
+        topic="global_control",
+        payload={
+            "status": "online" if online else "offline",
+            "user": client_mqtt._client_id,
+        },
     )
-    while 1:
-        publish(
-            client_mqtt=client_mqtt,
-            topic=topic,
-            payload=payload,
-        )
-        sleep(2)

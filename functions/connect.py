@@ -3,15 +3,20 @@ import random
 import logging
 from time import sleep
 
-def client_id(): return f'user-{random.randint(0, 99999)}'
 
-def connect_mqtt(broker: str = 'localhost', port: int = 1883):
+def client_id():
+    return f"user-{random.randint(0, 99999)}"
+
+
+def connect_mqtt(broker: str = "localhost", port: int = 1883):
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
-            print(f"Connected to MQTT Broker!\n\
-                Client: {client}\n\
+            print(
+                f"Connected to MQTT Broker!\n\
+                Client: {client._client_id}\n\
                 User data: {userdata}\n\
-                Flags: {flags}")
+                Flags: {flags}"
+            )
         else:
             print("Failed to connect, return code %d\n", rc)
 
@@ -21,10 +26,12 @@ def connect_mqtt(broker: str = 'localhost', port: int = 1883):
     client.connect(broker, port)
     return client
 
+
 FIRST_RECONNECT_DELAY = 1
 RECONNECT_RATE = 2
 MAX_RECONNECT_COUNT = 12
 MAX_RECONNECT_DELAY = 60
+
 
 def on_disconnect(client, userdata, rc):
     logging.info("Disconnected with result code: %s", rc)

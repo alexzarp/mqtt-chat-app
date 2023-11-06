@@ -13,7 +13,7 @@ class Terminal:
         self.type = None
 
     def main_screen(self):
-        system("clear")
+        # system("clear")
         print("O que deseja fazer?")
         print(
             "1 - Listar destinatários possíveis"
@@ -24,12 +24,14 @@ class Terminal:
         print(
             "3 - Listar grupos cadastrados"
         )  # Listagem dos grupos cadastrados: para cada grupo, listar o nome do grupo, líder e demais membros;
+        print("4 - Entrar em um grupo")
         print(
-            "4 - Iniciar uma conversa"
+            "5 - Iniciar uma conversa"
         )  # Solicitação de conversa e, para depuração, listagem do histórico de solicitação recebidas,
         # bem como listagem das confirmações de aceitação da solicitação de batepapo (listar, apenas para depuração,
         # a informação do tópico criado para iniciar o bate-papo).
-        match self.handle_option(type=int()):
+        print("5 - Entrar num grupo")
+        match self.handle_option():
             case 1:
                 list_destinations(client_mqtt=self.client_mqtt)
             case 2:
@@ -40,9 +42,9 @@ class Terminal:
                 pass
             case 4:
                 print("Para qual destinatário?: ")
-                topic = self.handle_option(type=str())
+                topic = self.handle_option()
                 print("Digite a mensagem: \n>>> ")
-                message = self.handle_option(type=str())
+                message = self.handle_option()
                 start_conversation(
                     client_mqtt=self.client_mqtt,
                     topic=topic,
@@ -52,15 +54,16 @@ class Terminal:
                 print("Opção inválida!!")
                 self.main_screen()
 
-    def handle_option(self, type):
-        match type:
-            case isinstance(type, int):
-                self.type = int()
-            case isinstance(type, str):
-                self.type = str()
-            case _:
-                print("Tipo inválido!!")
-                self.handle_option(type=type)
+    def handle_option(self):
+        return input()
+        # match type:
+        #     case isinstance(type, int):
+        #         self.type = int()
+        #     case isinstance(type, str):
+        #         self.type = str()
+        #     case _:
+        #         print("Tipo inválido!!")
+        #         self.handle_option(type=type)
 
         try:
             option = self.type(input())
