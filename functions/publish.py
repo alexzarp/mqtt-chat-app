@@ -1,17 +1,15 @@
 from time import sleep
+from paho.mqtt import client as mqtt_client
 
-def publish(client, topic, msg):
-    msg_count = 1
+
+def publish(mqtt_client: mqtt_client.Client, topic, payload):
     while True:
         sleep(1)
-        msg = f"messages: {msg_count}"
-        result = client.publish(topic, msg)
+        result = mqtt_client.publish(topic, payload)
         # result: [0, 1]
         status = result[0]
         if status == 0:
-            print(f"Send `{msg}` to topic `{topic}`")
+            print(f"Send `{payload}` to topic `{topic}`")
+            break
         else:
             print(f"Failed to send message to topic {topic}")
-        msg_count += 1
-        if msg_count > 5:
-            break

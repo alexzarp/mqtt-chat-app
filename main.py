@@ -10,7 +10,7 @@ import json
 
 def run():
     client_mqtt = connect_mqtt()
-    online()
+    online(client_mqtt)
 
     subscribe(
         client_mqtt=client_mqtt,
@@ -31,7 +31,7 @@ def run():
         client_mqtt.loop_start()
     except KeyboardInterrupt:
         print("Exiting...")
-        online(False)
+        online(client_mqtt=client_mqtt, online=False)
         client_mqtt.loop_stop()
 
     # terminal_thread.join()

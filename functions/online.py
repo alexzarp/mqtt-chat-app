@@ -1,14 +1,16 @@
 from functions.publish import publish
+from paho.mqtt import client as mqtt_client
 import json
 from time import sleep
 
 
-def online(client_mqtt, topic="global_control", online=True):
+def online(mqtt_client: mqtt_client.Client, topic="global_control", online=True):
+    payload = {
+        "status": "online" if online else "offline",
+        "user": str(mqtt_client._client_id),
+    }
     publish(
-        client_mqtt=client_mqtt,
-        topic="global_control",
-        payload={
-            "status": "online" if online else "offline",
-            "user": client_mqtt._client_id,
-        },
+        mqtt_client=mqtt_client,
+        topic=topic,
+        payload=json.dumps(payload),  # .encode("utf-8"),
     )
