@@ -4,7 +4,7 @@ import logging
 from time import sleep
 
 
-def client_id():
+def client_id() -> mqtt_client.Client:
     return f"user-{random.randint(0, 99999)}"
 
 

@@ -1,5 +1,6 @@
 from os import system
 from functions.list_destinations import list_destinations
+from paho.mqtt import client as mqtt_client
 
 # from functions.create_group import create_group
 # from functions.list_registed_groups import list_registed_groups
@@ -7,10 +8,8 @@ from functions.start_conversation import start_conversation
 
 
 class Terminal:
-    def __init__(self, client_mqtt):
+    def __init__(self, client_mqtt: mqtt_client.Client):
         self.client_mqtt = client_mqtt
-        # self.option = None
-        self.type = None
 
     def main_screen(self):
         # system("clear")
@@ -30,7 +29,7 @@ class Terminal:
         )  # Solicitação de conversa e, para depuração, listagem do histórico de solicitação recebidas,
         # bem como listagem das confirmações de aceitação da solicitação de batepapo (listar, apenas para depuração,
         # a informação do tópico criado para iniciar o bate-papo).
-        print("5 - Entrar num grupo")
+        print("6 - Entrar num grupo")
         match self.handle_option():
             case 1:
                 list_destinations(client_mqtt=self.client_mqtt)
@@ -50,24 +49,13 @@ class Terminal:
                     topic=topic,
                     message=message,
                 )
+            case 5:
+                pass
+            case 6:
+                pass
             case _:
                 print("Opção inválida!!")
                 self.main_screen()
 
     def handle_option(self):
-        return input()
-        # match type:
-        #     case isinstance(type, int):
-        #         self.type = int()
-        #     case isinstance(type, str):
-        #         self.type = str()
-        #     case _:
-        #         print("Tipo inválido!!")
-        #         self.handle_option(type=type)
-
-        try:
-            option = self.type(input())
-        except ValueError:
-            print("Opção inválida!!")
-            self.main_screen()
-        return option
+        return int(input())

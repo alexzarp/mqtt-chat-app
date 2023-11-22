@@ -1,6 +1,6 @@
 from functions.connect import connect_mqtt
 from functions.publish import publish
-from terminal.Terminal import Terminal
+from terminal.terminal import Terminal
 from functions.subscribe import subscribe
 from functions.online import online
 from threading import Thread
@@ -15,13 +15,13 @@ def run():
     subscribe(
         client_mqtt=client_mqtt,
         topic="global_control",
-        on_message=action,
+        on_message=monitor,
     )
     print(client_mqtt._client_id)
     subscribe(
         client_mqtt=client_mqtt,
-        topic=client_mqtt._client_id.decode("utf-8") + "_control",
-        on_message=action,
+        topic=(client_mqtt._client_id).decode("utf-8") + "_control",
+        on_message=mytopic,
     )
 
     terminal = Terminal(client_mqtt=client_mqtt)
@@ -29,7 +29,7 @@ def run():
 
     try:
         client_mqtt.loop_start()
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, EOFError):
         print("Exiting...")
         online(client_mqtt=client_mqtt, online=False)
         client_mqtt.loop_stop()

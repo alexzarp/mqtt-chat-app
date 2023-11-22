@@ -7,7 +7,7 @@ from time import sleep
 def online(mqtt_client: mqtt_client.Client, topic="global_control", online=True):
     payload = {
         "status": "online" if online else "offline",
-        "user": str(mqtt_client._client_id),
+        "user": (mqtt_client._client_id).decode("utf-8"),
     }
     publish(
         mqtt_client=mqtt_client,
