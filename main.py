@@ -6,9 +6,12 @@ from functions.online import online
 from threading import Thread
 from handle_comunication.handle_comunication import *
 import json
+import os
+import sys
 
 
 def run():
+    os.system("clear")
     client_mqtt = connect_mqtt()
     online(client_mqtt)
 
@@ -17,12 +20,12 @@ def run():
         topic="global_control",
         on_message=monitor,
     )
-    print(client_mqtt._client_id)
-    subscribe(
-        client_mqtt=client_mqtt,
-        topic=(client_mqtt._client_id).decode("utf-8") + "_control",
-        on_message=mytopic,
-    )
+
+    # subscribe(
+    #     client_mqtt=client_mqtt,
+    #     topic=(client_mqtt._client_id).decode("utf-8") + "_control",
+    #     on_message=mytopic,
+    # )
 
     terminal = Terminal(client_mqtt=client_mqtt)
     terminal_thread = Thread(target=terminal.main_screen, args=()).start()

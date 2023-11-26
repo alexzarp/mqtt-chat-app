@@ -2,13 +2,14 @@ from paho.mqtt import client as mqtt_client
 import random
 import logging
 from time import sleep
+import sys
 
 
 def client_id() -> mqtt_client.Client:
     return f"user-{random.randint(0, 99999)}"
 
 
-def connect_mqtt(broker: str = "localhost", port: int = 1883):
+def connect_mqtt(broker: str = "localhost", port: int = 1883, id=sys.argv[1]):
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
             print(
@@ -20,7 +21,7 @@ Flags: {flags}"
         else:
             print("Failed to connect, return code %d\n", rc)
 
-    client = mqtt_client.Client(client_id())
+    client = mqtt_client.Client(f"user-{id}")
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
     client.connect(broker, port)

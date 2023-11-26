@@ -1,9 +1,6 @@
 from paho.mqtt import client as mqtt_client
-import redis
 from functions.publish import publish
 import json
-
-redis = redis.Redis()
 
 
 def display_message(client, message):
@@ -13,50 +10,65 @@ def display_message(client, message):
 def monitor(mqtt_client: mqtt_client.Client, userdata, msg):
     import json
 
-    json = json.loads(msg.payload.decode())
-    user = json["user"]
+    recv = json.loads(msg.payload.decode())
 
-    redis.set(f"global_control: {user}", json)
+    local = None
+    with open("data/storage.json", "r") as arquivo:
+        local = json.load(arquivo)
+
+    print(local)
+    user = recv["user"]
+    status = recv["status"]
+
+    saved_user = local.get(f"{user}")
+    if saved_user is None:
+        local[f"{user}"] = {"status": status}
+    else:
+        local[f"{user}"]["status"] = status
+
+    with open("data/storage.json", "r") as arquivo:
+        json.dump(local, arquivo, indent=4)
 
 
-def mytopic(mqtt_client: mqtt_client.Client, userdata, msg):
-    import json
+# def mytopic(mqtt_client: mqtt_client.Client, userdata, msg):
+#     import json
 
-    json = json.loads(msg.payload.decode())
+#     json = json.loads(msg.payload.decode())
 
-    match json["action"]:
-        case "conversation":
-            client = json["client"]
-            if json["message"] == (mqtt_client._client_id).decode("utf-8"):
-                temp_topic = (
-                    (mqtt_client._client_id).decode("utf-8") + client + "_timestamp"
-                )
-                publish(
-                    mqtt_client,
-                    client + "_control",
-                    json.dumps(
-                        {
-                            "action": "accept",
-                            "message": temp_topic,
-                            "client": (mqtt_client._client_id).decode("utf-8"),
-                        },
-                    ),
-                )
+#     print("OIIIIIIIIi", json)
+#     match json["action"]:
+#         case "conversation":
+#             client = json["client"]
+#             if json["message"] == (mqtt_client._client_id).decode("utf-8"):
+#                 temp_topic = (
+#                     (mqtt_client._client_id).decode("utf-8") + client + "_timestamp"
+#                 )
+#                 publish(
+#                     mqtt_client,
+#                     client + "_control",
+#                     json.dumps(
+#                         {
+#                             "action": "accept",
+#                             "message": temp_topic,
+#                             "client": (mqtt_client._client_id).decode("utf-8"),
+#                         },
+#                     ),
+#                 )
 
-        case "accept":
-            client = json["client"]
-            if json["message"] == (mqtt_client._client_id).decode("utf-8"):
-                temp_topic = (
-                    (mqtt_client._client_id).decode("utf-8") + client + "_timestamp"
-                )
-                publish(
-                    mqtt_client,
-                    client + "_control",
-                    json.dumps(
-                        {
-                            "action": "accept",
-                            "message": temp_topic,
-                            "client": (mqtt_client._client_id).decode("utf-8"),
-                        },
-                    ),
-                )
+#         case "accept":
+#             client = json["client"]
+#             if json["message"] == (mqtt_client._client_id).decode("utf-8"):
+#                 temp_topic = (
+#                     (mqtt_client._client_id).decode("utf-8") + client + "_timestamp"
+#                 )
+#                 publish(
+#                     mqtt_client,
+#                     client + "_control",
+#                     json.dumps(
+#                         {
+#                             "action": "accept",
+#                             "message": temp_topic,
+#                             "client": (mqtt_client._client_id).decode("utf-8"),
+#                         },
+#                     ),
+#                 )
