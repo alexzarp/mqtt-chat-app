@@ -30,45 +30,44 @@ def monitor(mqtt_client: mqtt_client.Client, userdata, msg):
         json.dump(local, arquivo, indent=4)
 
 
-# def mytopic(mqtt_client: mqtt_client.Client, userdata, msg):
-#     import json
+def mytopic(mqtt_client: mqtt_client.Client, userdata, msg):
+    import json
 
-#     json = json.loads(msg.payload.decode())
+    json = json.loads(msg.payload.decode())
 
-#     print("OIIIIIIIIi", json)
-#     match json["action"]:
-#         case "conversation":
-#             client = json["client"]
-#             if json["message"] == (mqtt_client._client_id).decode("utf-8"):
-#                 temp_topic = (
-#                     (mqtt_client._client_id).decode("utf-8") + client + "_timestamp"
-#                 )
-#                 publish(
-#                     mqtt_client,
-#                     client + "_control",
-#                     json.dumps(
-#                         {
-#                             "action": "accept",
-#                             "message": temp_topic,
-#                             "client": (mqtt_client._client_id).decode("utf-8"),
-#                         },
-#                     ),
-#                 )
+    match json["action"]:
+        case "conversation":
+            client = json["client"]
+            if json["message"] == (mqtt_client._client_id).decode("utf-8"):
+                temp_topic = (
+                    (mqtt_client._client_id).decode("utf-8") + client + "_timestamp"
+                )
+                publish(
+                    mqtt_client,
+                    client + "_control",
+                    json.dumps(
+                        {
+                            "action": "accept",
+                            "message": temp_topic,
+                            "client": (mqtt_client._client_id).decode("utf-8"),
+                        },
+                    ),
+                )
 
-#         case "accept":
-#             client = json["client"]
-#             if json["message"] == (mqtt_client._client_id).decode("utf-8"):
-#                 temp_topic = (
-#                     (mqtt_client._client_id).decode("utf-8") + client + "_timestamp"
-#                 )
-#                 publish(
-#                     mqtt_client,
-#                     client + "_control",
-#                     json.dumps(
-#                         {
-#                             "action": "accept",
-#                             "message": temp_topic,
-#                             "client": (mqtt_client._client_id).decode("utf-8"),
-#                         },
-#                     ),
-#                 )
+        case "accept":
+            client = json["client"]
+            if json["message"] == (mqtt_client._client_id).decode("utf-8"):
+                temp_topic = (
+                    (mqtt_client._client_id).decode("utf-8") + client + "_timestamp"
+                )
+                publish(
+                    mqtt_client,
+                    client + "_control",
+                    json.dumps(
+                        {
+                            "action": "accept",
+                            "message": temp_topic,
+                            "client": (mqtt_client._client_id).decode("utf-8"),
+                        },
+                    ),
+                )
