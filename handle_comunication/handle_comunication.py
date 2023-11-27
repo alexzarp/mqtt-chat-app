@@ -13,7 +13,7 @@ def monitor(mqtt_client: mqtt_client.Client, userdata, msg):
     recv = json.loads(msg.payload.decode())
 
     local = None
-    with open("data/storage.json", "r") as arquivo:
+    with open("data/storage.json", "r+") as arquivo:
         local = json.load(arquivo)
 
     print(local)
