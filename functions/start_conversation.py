@@ -10,9 +10,10 @@ def start_conversation(client_mqtt: mqtt_client.Client, topic, message):
         topic + "_control",
         json.dumps(
             {
-                "action": "coversation",
+                "action": "conversation",
                 "message": message,
                 "client": (client_mqtt._client_id).decode("utf-8"),
             },
         ),
     )
+    return "stand"

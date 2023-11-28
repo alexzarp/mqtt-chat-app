@@ -2,11 +2,11 @@ from os import system
 from functions.list_destinations import list_destinations
 from paho.mqtt import client as mqtt_client
 from functions.online import online
-
 from functions.create_group import create_group
 
 # from functions.list_registed_groups import list_registed_groups
 from functions.start_conversation import start_conversation
+import queue
 
 
 class Terminal:
@@ -15,7 +15,6 @@ class Terminal:
 
     def main_screen(self):
         while 1:
-            # system("clear")
             txt = "\n"
             txt += "O que deseja fazer?\n"
             txt += "1 - Listar destinatários possíveis\n"  # Listagem dos usuários e seus respectivos status (online/offline);
@@ -34,7 +33,7 @@ class Terminal:
                 case 2:
                     topic = input("Para qual destinatáio: ")
                     message = input("Digite a mensagem: \n>>> ")
-                    start_conversation(
+                    status = start_conversation(
                         client_mqtt=self.client_mqtt,
                         topic=topic,
                         message=message,
@@ -58,11 +57,14 @@ class Terminal:
 
     def handle_option(self, time: float = None):
         from time import sleep
+        import re
 
+        padrao = re.compile(r"^\d")
         if time:
             sleep(time)
         while True:
-            try:
-                return int(input("Digite a opção: "))
-            except:
-                print("Formato inválido!!")
+            op = input()
+            if bool(padrao.match(op)):
+                return int(op)
+            else:
+                continue
