@@ -14,60 +14,55 @@ class Terminal:
         self.client_mqtt = client_mqtt
 
     def main_screen(self):
-        # system("clear")
-        print("O que deseja fazer?")
-        print(
-            "1 - Listar destinatários possíveis"
-        )  # Listagem dos usuários e seus respectivos status (online/offline);
-        print(
-            "2 - Criar grupo"
-        )  # Criação de grupo (caso o grupo não exista, o criador do grupo se autodeclara líder do mesmo).
-        print(
-            "3 - Listar grupos cadastrados"
-        )  # Listagem dos grupos cadastrados: para cada grupo, listar o nome do grupo, líder e demais membros;
-        print("4 - Entrar em um grupo")
-        print(
-            "5 - Iniciar uma conversa"
-        )  # Solicitação de conversa e, para depuração, listagem do histórico de solicitação recebidas,
-        # bem como listagem das confirmações de aceitação da solicitação de batepapo (listar, apenas para depuração,
-        # a informação do tópico criado para iniciar o bate-papo).
-        print("6 - Sair do sistema")
+        while 1:
+            # system("clear")
+            txt = "\n"
+            txt += "O que deseja fazer?\n"
+            txt += "1 - Listar destinatários possíveis\n"  # Listagem dos usuários e seus respectivos status (online/offline);
+            txt += "2 - Iniciar uma conversa\n"  # Solicitação de conversa e, para depuração, listagem do histórico de solicitação recebidas,
+            txt += "3 - Criar grupo\n"  # Criação de grupo (caso o grupo não exista, o criador do grupo se autodeclara líder do mesmo).
+            txt += "4 - Entrar em um grupo\n"
+            txt += "5 - Listar grupos cadastrados\n"  # Listagem dos grupos cadastrados: para cada grupo, listar o nome do grupo, líder e demais membros;
+            # bem como listagem das confirmações de aceitação da solicitação de batepapo (listar, apenas para depuração,
+            # a informação do tópico criado para iniciar o bate-papo).
+            txt += "6 - Sair do sistema\n"
+            print(txt)
 
-        match self.handle_option():
-            case 1:
-                list_destinations()
-            case 2:
-                create_group()
-                pass
-            case 3:
-                # list_registed_groups()
-                pass
-            case 4:
-                print("Para qual destinatário?: ")
-                topic = self.handle_option()
-                print("Digite a mensagem: \n>>> ")
-                message = self.handle_option()
-                start_conversation(
-                    client_mqtt=self.client_mqtt,
-                    topic=topic,
-                    message=message,
-                )
-            case 5:
-                pass
-            case 6:
-                print("Exiting...")
-                online(client_mqtt=self.client_mqtt, online=False)
-                self.client_mqtt.loop_stop()
-                exit(1)
-            case _:
-                print("Opção inválida!!")
-                self.main_screen()
+            match self.handle_option(time=0.2):
+                case 1:
+                    list_destinations()
+                case 2:
+                    topic = input("Para qual destinatáio: ")
+                    message = input("Digite a mensagem: \n>>> ")
+                    start_conversation(
+                        client_mqtt=self.client_mqtt,
+                        topic=topic,
+                        message=message,
+                    )
+                case 4:
+                    create_group()
+                    pass
+                case 3:
+                    # list_registed_groups()
+                    pass
+                case 5:
+                    pass
+                case 6:
+                    print("Exiting...")
+                    online(client_mqtt=self.client_mqtt, online=False)
+                    self.client_mqtt.loop_stop()
+                    exit(1)
+                case _:
+                    print("Opção inválida!!")
+                    self.main_screen()
 
-    def handle_option(self):
+    def handle_option(self, time: float = None):
+        from time import sleep
+
+        if time:
+            sleep(time)
         while True:
             try:
-                opt = input()
-                if isinstance(opt, int):
-                    return opt
+                return int(input("Digite a opção: "))
             except:
                 print("Formato inválido!!")

@@ -11,14 +11,17 @@ def monitor(mqtt_client: mqtt_client.Client, userdata, msg):
     import json
 
     recv = json.loads(msg.payload.decode())
-
-    local = None
-    with open("data/storage.json", "r+") as arquivo:
-        local = json.load(arquivo)
-
-    print(local)
     user = recv["user"]
     status = recv["status"]
+
+    local = None
+    try:
+        with open("data/storage.json", "+r") as arquivo:
+            local = json.load(arquivo)
+    except:  # arquivo vazio
+        local = {f"{user}": {"status": status}}
+        with open("data/storage.json", "+w") as arquivo:
+            json.dump(local, arquivo, indent=4)
 
     saved_user = local.get(f"{user}")
     if saved_user is None:
@@ -26,7 +29,7 @@ def monitor(mqtt_client: mqtt_client.Client, userdata, msg):
     else:
         local[f"{user}"]["status"] = status
 
-    with open("data/storage.json", "r") as arquivo:
+    with open("data/storage.json", "+r") as arquivo:
         json.dump(local, arquivo, indent=4)
 
 
@@ -34,11 +37,11 @@ def mytopic(mqtt_client: mqtt_client.Client, userdata, msg):
     import json
 
     json = json.loads(msg.payload.decode())
-
+    print(json)
     match json["action"]:
         case "conversation":
             client = json["client"]
-            if json["message"] == (mqtt_client._client_id).decode("utf-8"):
+            if client == (mqtt_client._client_id).decode("utf-8"):
                 temp_topic = (
                     (mqtt_client._client_id).decode("utf-8") + client + "_timestamp"
                 )
