@@ -3,7 +3,8 @@ from functions.list_destinations import list_destinations
 from paho.mqtt import client as mqtt_client
 from functions.online import online
 
-# from functions.create_group import create_group
+from functions.create_group import create_group
+
 # from functions.list_registed_groups import list_registed_groups
 from functions.start_conversation import start_conversation
 
@@ -36,7 +37,7 @@ class Terminal:
             case 1:
                 list_destinations()
             case 2:
-                # create_group()
+                create_group()
                 pass
             case 3:
                 # list_registed_groups()
