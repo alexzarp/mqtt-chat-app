@@ -10,6 +10,11 @@ def subscribe(client_mqtt: mqtt_client.Client, topic: bytes, on_message: callabl
     client_mqtt.message_callback_add(topic, on_message)
 
 
+def unsubscribe(client_mqtt: mqtt_client.Client, topic: bytes):
+    client_mqtt.unsubscribe(topic)
+    client_mqtt.message_callback_remove(topic)
+
+
 # self.client.subscribe("GROUPS/#", 2)
 # self.client.subscribe("USERS/#", 2)
 # self.client.subscribe(f"{self.id}_CONTROL", 2)

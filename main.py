@@ -27,11 +27,10 @@ def run():
         on_message=mytopic,
     )
 
-    terminal = Terminal(client_mqtt=client_mqtt)
-    terminal_thread = Thread(target=terminal.main_screen, args=()).start()
-
     try:
         client_mqtt.loop_start()
+        terminal = Terminal(client_mqtt=client_mqtt)
+        terminal.main_screen()
     except (KeyboardInterrupt, EOFError):
         print("Exiting...")
         online(client_mqtt=client_mqtt, online=False)

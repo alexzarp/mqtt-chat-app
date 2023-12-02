@@ -3,6 +3,7 @@ from functions.list_destinations import list_destinations
 from paho.mqtt import client as mqtt_client
 from functions.online import online
 from functions.create_group import create_group
+from functions.subscribe import unsubscribe
 
 # from functions.list_registed_groups import list_registed_groups
 from functions.start_conversation import start_conversation
@@ -24,7 +25,8 @@ class Terminal:
             txt += "5 - Listar grupos cadastrados\n"  # Listagem dos grupos cadastrados: para cada grupo, listar o nome do grupo, líder e demais membros;
             # bem como listagem das confirmações de aceitação da solicitação de batepapo (listar, apenas para depuração,
             # a informação do tópico criado para iniciar o bate-papo).
-            txt += "6 - Sair do sistema\n"
+            txt += "6 - Fechar uma conversa\n"
+            txt += "7 - Sair do sistema\n"
             print(txt)
 
             match self.handle_option(time=0.2):
@@ -32,11 +34,10 @@ class Terminal:
                     list_destinations()
                 case 2:
                     topic = input("Para qual destinatáio: ")
-                    message = input("Digite a mensagem: \n>>> ")
-                    status = start_conversation(
+                    # message = input("Digite a mensagem: \n>>> ")
+                    start_conversation(
                         client_mqtt=self.client_mqtt,
                         topic=topic,
-                        message=message,
                     )
                 case 4:
                     create_group()
@@ -47,6 +48,13 @@ class Terminal:
                 case 5:
                     pass
                 case 6:
+                    topic = input("Qual conversa deseja fechar: \n>>>")
+                    try:
+                        unsubscribe(client_mqtt=mqtt_client, topic=topic)
+                        print(f"Conversa {topic} fechada.")
+                    except:
+                        print(f"Não foi possível fechar a conversa {topic}.")
+                case 7:
                     print("Exiting...")
                     online(client_mqtt=self.client_mqtt, online=False)
                     self.client_mqtt.loop_stop()
