@@ -39,12 +39,15 @@ def mytopic(mqtt_client: mqtt_client.Client, userdata, msg):
     import datetime
 
     recv = json.loads(msg.payload.decode())
+
     match recv["action"]:
         case "conversation":
             client = recv["client"]
             temp_topic = (
                 (mqtt_client._client_id).decode("utf-8") + client + "_conversation"
             )
+            print(client + "_control")
+
             publish(
                 mqtt_client,
                 client + "_control",
@@ -62,44 +65,41 @@ def mytopic(mqtt_client: mqtt_client.Client, userdata, msg):
                 topic=temp_topic,
                 on_message=displaymsg,
             )
-            conversation(mqtt_client, temp_topic)
 
         case "accept":
             print("aceitou")
             client = recv["client"]
             temp_topic = recv["message"]
             print(f"Conversa com {client} iniciada no {temp_topic}.")
-            print(f"Digite `\exit` para sair deste chat.", end="\n\n")
-            conversation(mqtt_client, temp_topic)
+            topics.append((temp_topic, client))
+            subscribe(
+                client_mqtt=mqtt_client,
+                topic=temp_topic,
+                on_message=displaymsg,
+            )
 
         case "exit":
             unsubscribe(mqtt_client, recv["topic"])
-            print(f"`{recv['client']}` encerrou a conversa `{recv['topic']}`")
+            print(f"`{recv['client']}` encerrou a conversa `{recv['message']}`")
+
+        case _:
+            print(f"Erro: {recv}")
 
 
 def conversation(mqtt_client: mqtt_client.Client, temp_topic):
-    subscribe(
-        client_mqtt=mqtt_client,
-        topic=temp_topic,
-        on_message=displaymsg,
+    print("Digite a mensagem: \n>>> ", end="")
+    message = str(input())
+    publish(
+        mqtt_client,
+        temp_topic,
+        json.dumps(
+            {
+                "action": "message",
+                "message": message,
+                "client": (mqtt_client._client_id).decode("utf-8"),
+            },
+        ),
     )
-    while 1:
-        print("Digite a mensagem: \n>>> ", end="")
-        message = input()
-        if message == "\exit":
-            break
-
-        publish(
-            mqtt_client,
-            temp_topic,
-            json.dumps(
-                {
-                    "action": "message",
-                    "message": message,
-                    "client": (mqtt_client._client_id).decode("utf-8"),
-                },
-            ),
-        )
 
     publish(
         mqtt_client,
@@ -115,13 +115,9 @@ def conversation(mqtt_client: mqtt_client.Client, temp_topic):
     unsubscribe(mqtt_client, temp_topic)
 
 
-()
-
-
 def displaymsg(mqtt_client: mqtt_client.Client, userdata, msg):
     message = json.loads(msg.payload.decode())
-    if message["action"] == "\exit":
-        print(f"`{message['client']}` encerrou a conversa `{message['message']}`")
-        unsubscribe(mqtt_client, message["message"])
-        return
-    print(f"Mensagem de {(mqtt_client._client_id).decode('utf-8')}: {message}")
+    if message["client"] != (mqtt_client._client_id).decode("utf-8"):
+        print(
+            f"Mensagem de {(mqtt_client._client_id).decode('utf-8')}: {message['message']}"
+        )

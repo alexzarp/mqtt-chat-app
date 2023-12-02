@@ -21,7 +21,7 @@ Flags: {flags}"
         else:
             print("Failed to connect, return code %d\n", rc)
 
-    client = mqtt_client.Client(f"user-{id}")
+    client = mqtt_client.Client(f"{id}")
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
     client.connect(broker, port)

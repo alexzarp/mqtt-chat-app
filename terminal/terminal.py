@@ -6,7 +6,7 @@ from functions.create_group import create_group
 from functions.subscribe import unsubscribe
 
 # from functions.list_registed_groups import list_registed_groups
-from functions.start_conversation import start_conversation
+from functions.start_conversation import *
 import queue
 
 
@@ -20,13 +20,14 @@ class Terminal:
             txt += "O que deseja fazer?\n"
             txt += "1 - Listar destinatários possíveis\n"  # Listagem dos usuários e seus respectivos status (online/offline);
             txt += "2 - Iniciar uma conversa\n"  # Solicitação de conversa e, para depuração, listagem do histórico de solicitação recebidas,
-            txt += "3 - Criar grupo\n"  # Criação de grupo (caso o grupo não exista, o criador do grupo se autodeclara líder do mesmo).
-            txt += "4 - Entrar em um grupo\n"
-            txt += "5 - Listar grupos cadastrados\n"  # Listagem dos grupos cadastrados: para cada grupo, listar o nome do grupo, líder e demais membros;
+            txt += "3 - Enviar mensagem\n"
+            txt += "4 - Criar grupo\n"  # Criação de grupo (caso o grupo não exista, o criador do grupo se autodeclara líder do mesmo).
+            txt += "5 - Entrar em um grupo\n"
+            txt += "6 - Listar grupos cadastrados\n"  # Listagem dos grupos cadastrados: para cada grupo, listar o nome do grupo, líder e demais membros;
             # bem como listagem das confirmações de aceitação da solicitação de batepapo (listar, apenas para depuração,
             # a informação do tópico criado para iniciar o bate-papo).
-            txt += "6 - Fechar uma conversa\n"
-            txt += "7 - Sair do sistema\n"
+            txt += "7 - Fechar uma conversa\n"
+            txt += "8 - Sair do sistema\n"
             print(txt)
 
             match self.handle_option(time=0.2):
@@ -39,11 +40,10 @@ class Terminal:
                         client_mqtt=self.client_mqtt,
                         topic=topic,
                     )
+                case 3:
+                    send_message(client_mqtt=self.client_mqtt)
                 case 4:
                     create_group()
-                    pass
-                case 3:
-                    # list_registed_groups()
                     pass
                 case 5:
                     pass
