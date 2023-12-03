@@ -148,7 +148,7 @@ def displaymsgfromgroups(mqtt_client: mqtt_client.Client, userdata, msg):
         and message.get("message") != None
     ):
         print(
-            f"Mensagem de {message['client']} no grupo `{message['group']}`: {message['message']}\n"
+            f"Mensagem de `{message['client']}` no grupo `{message['group']}`: {message['message']}\n"
         )
 
 
