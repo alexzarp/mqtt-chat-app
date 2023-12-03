@@ -123,12 +123,15 @@ def conversation(mqtt_client: mqtt_client.Client, temp_topic):
 def displaymsg(mqtt_client: mqtt_client.Client, userdata, msg):
     message = json.loads(msg.payload.decode())
 
-    if message.get("action") == "exit":
+    if message.get("action") == "exit" and message.get("client") != (
+        mqtt_client._client_id
+    ).decode("utf-8"):
         unsubscribe(mqtt_client, message["topic"])
         print(
             f"`{message['client']}` encerrou a conversa `{message['topic']}`",
             end="\n\n",
         )
+        print(topics)
         topics.pop(message["client"])
 
     if (

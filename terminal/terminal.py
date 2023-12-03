@@ -57,6 +57,22 @@ class Terminal:
                     end_conversation(self.client_mqtt)
                 case 9:
                     print("Exiting...")
+                    for topic in topics:
+                        publish(
+                            self.client_mqtt,
+                            topics.get(topic),
+                            json.dumps(
+                                {
+                                    "action": "exit",
+                                    "topic": topics.get(topic),
+                                    "client": (self.client_mqtt._client_id).decode(
+                                        "utf-8"
+                                    ),
+                                },
+                            ),
+                        )
+                        unsubscribe(self.client_mqtt, topic)
+
                     online(self.client_mqtt, online=False)
                     self.client_mqtt.loop_stop()
                     exit(1)
