@@ -43,8 +43,7 @@ class Terminal:
                 case 3:
                     send_message(client_mqtt=self.client_mqtt)
                 case 4:
-                    create_group()
-                    pass
+                    create_group(self.client_mqtt)
                 case 5:
                     pass
                 case 6:
@@ -58,7 +57,6 @@ class Terminal:
                     exit(1)
                 case _:
                     print("Opção inválida!!")
-                    self.main_screen()
 
     def handle_option(self, time: float = None):
         from time import sleep

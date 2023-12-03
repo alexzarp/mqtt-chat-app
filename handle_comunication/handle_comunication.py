@@ -131,6 +131,10 @@ def displaymsg(mqtt_client: mqtt_client.Client, userdata, msg):
         )
 
 
+def displaymsgfromgroups(mqtt_client: mqtt_client.Client, userdata, msg):
+    pass
+
+
 def groups(mqtt_client: mqtt_client.Client, userdata, msg):
     import json
     import datetime
@@ -138,24 +142,11 @@ def groups(mqtt_client: mqtt_client.Client, userdata, msg):
     recv = json.loads(msg.payload.decode())
 
     match recv["action"]:
-        case "conversation":
+        case "create_group":
             client = recv["client"]
             temp_topic = (
                 (mqtt_client._client_id).decode("utf-8") + client + "_conversation"
             )
-
-            publish(
-                mqtt_client,
-                client + "_control",
-                json.dumps(
-                    {
-                        "action": "accept",
-                        "message": temp_topic,
-                        "client": (mqtt_client._client_id).decode("utf-8"),
-                    },
-                ),
-            )
-            topics[client] = temp_topic
             subscribe(
                 client_mqtt=mqtt_client,
                 topic=temp_topic,
