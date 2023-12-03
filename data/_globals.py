@@ -1,1 +1,3 @@
 topics = {}
+groups = {}
+mygroups = {}

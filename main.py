@@ -30,7 +30,7 @@ def run():
     subscribe(
         client_mqtt=client_mqtt,
         topic="groups",
-        on_message=groups,
+        on_message=groups_handle,
     )
 
     try:

@@ -1,8 +1,8 @@
 from os import system
-from functions.list_destinations import list_destinations
+from functions.list_destinations import list_destinations, list_joined_groups
 from paho.mqtt import client as mqtt_client
 from functions.online import online
-from functions.create_group import create_group
+from functions.create_group import create_group, join_group
 from functions.subscribe import unsubscribe
 
 # from functions.list_registed_groups import list_registed_groups
@@ -21,13 +21,14 @@ class Terminal:
             txt += "1 - Listar destinatários possíveis\n"  # Listagem dos usuários e seus respectivos status (online/offline);
             txt += "2 - Iniciar uma conversa\n"  # Solicitação de conversa e, para depuração, listagem do histórico de solicitação recebidas,
             txt += "3 - Enviar mensagem\n"
-            txt += "4 - Criar grupo\n"  # Criação de grupo (caso o grupo não exista, o criador do grupo se autodeclara líder do mesmo).
-            txt += "5 - Entrar em um grupo\n"
-            txt += "6 - Listar grupos cadastrados\n"  # Listagem dos grupos cadastrados: para cada grupo, listar o nome do grupo, líder e demais membros;
+            txt += "4 - Enviar mensagem para grupo\n"
+            txt += "5 - Criar grupo\n"  # Criação de grupo (caso o grupo não exista, o criador do grupo se autodeclara líder do mesmo).
+            txt += "6 - Entrar em um grupo\n"
+            txt += "7 - Listar grupos cadastrados\n"  # Listagem dos grupos cadastrados: para cada grupo, listar o nome do grupo, líder e demais membros;
             # bem como listagem das confirmações de aceitação da solicitação de batepapo (listar, apenas para depuração,
             # a informação do tópico criado para iniciar o bate-papo).
-            txt += "7 - Fechar uma conversa\n"
-            txt += "8 - Sair do sistema\n"
+            txt += "8 - Fechar uma conversa\n"
+            txt += "9 - Sair do sistema\n"
             print(txt)
 
             match self.handle_option(time=0.2):
@@ -43,14 +44,18 @@ class Terminal:
                 case 3:
                     send_message(client_mqtt=self.client_mqtt)
                 case 4:
-                    create_group(self.client_mqtt)
+                    send_message_group(client_mqtt=self.client)
                 case 5:
-                    pass
+                    create_group(self.client_mqtt)
                 case 6:
-                    pass
+                    join_group(self.client_mqtt)
                 case 7:
-                    end_conversation(self.client_mqtt)
+                    list_joined_groups(
+                        f"data/{(self.client_mqtt._client_id).decode('utf-8')}_groups.json"
+                    )
                 case 8:
+                    end_conversation(self.client_mqtt)
+                case 9:
                     print("Exiting...")
                     online(self.client_mqtt, online=False)
                     self.client_mqtt.loop_stop()

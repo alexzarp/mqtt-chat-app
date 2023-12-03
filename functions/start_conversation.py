@@ -51,6 +51,10 @@ def send_message(client_mqtt: mqtt_client.Client):
     return "stand"
 
 
+def send_message_group(client_mqtt: mqtt_client.Client):
+    pass
+
+
 def end_conversation(client_mqtt: mqtt_client.Client):
     print("Usuarios conectados: ", end="\n")
     print("User - Topic")
