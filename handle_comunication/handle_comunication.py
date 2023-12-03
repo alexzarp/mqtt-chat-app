@@ -9,29 +9,33 @@ from time import sleep
 
 
 def monitor(mqtt_client: mqtt_client.Client, userdata, msg):
-    import json
-
     recv = json.loads(msg.payload.decode())
     user = recv["user"]
     status = recv["status"]
 
-    local = None
     try:
-        with open("data/storage.json", "+r") as arquivo:
+        with open("data/storage.json", "r") as arquivo:
             local = json.load(arquivo)
-    except:  # arquivo vazio
+    except FileNotFoundError:  # Se o arquivo não existir
         local = {f"{user}": {"status": status}}
-        with open("data/storage.json", "+w") as arquivo:
-            json.dump(local, arquivo, indent=4)
-
-    saved_user = local.get(f"{user}")
-    if saved_user is None:
-        local[f"{user}"] = {"status": status}
+    except json.JSONDecodeError:  # Se o arquivo estiver vazio ou com formato inválido
+        local = {f"{user}": {"status": status}}
     else:
-        local[f"{user}"]["status"] = status
+        saved_user = local.get(f"{user}")
+        if saved_user is None:
+            local[f"{user}"] = {"status": status}
+        else:
+            local[f"{user}"]["status"] = status
 
-    with open("data/storage.json", "+r") as arquivo:
+    with open("data/storage.json", "w") as arquivo:
         json.dump(local, arquivo, indent=4)
+
+    # with open("data/storage.json", "+r") as arquivo:
+    #     local = str(json.load(arquivo))
+    #     if local.endswith("}}"):
+    #         local = local[:-1]
+
+    #     json.dump(local, arquivo, indent=4)
 
 
 def mytopic(mqtt_client: mqtt_client.Client, userdata, msg):
@@ -39,8 +43,6 @@ def mytopic(mqtt_client: mqtt_client.Client, userdata, msg):
     import datetime
 
     recv = json.loads(msg.payload.decode())
-
-    print(recv)
 
     match recv["action"]:
         case "conversation":
@@ -127,3 +129,50 @@ def displaymsg(mqtt_client: mqtt_client.Client, userdata, msg):
         print(
             f"Mensagem de {(mqtt_client._client_id).decode('utf-8')}: {message['message']}\n"
         )
+
+
+def groups(mqtt_client: mqtt_client.Client, userdata, msg):
+    import json
+    import datetime
+
+    recv = json.loads(msg.payload.decode())
+
+    match recv["action"]:
+        case "conversation":
+            client = recv["client"]
+            temp_topic = (
+                (mqtt_client._client_id).decode("utf-8") + client + "_conversation"
+            )
+
+            publish(
+                mqtt_client,
+                client + "_control",
+                json.dumps(
+                    {
+                        "action": "accept",
+                        "message": temp_topic,
+                        "client": (mqtt_client._client_id).decode("utf-8"),
+                    },
+                ),
+            )
+            topics[client] = temp_topic
+            subscribe(
+                client_mqtt=mqtt_client,
+                topic=temp_topic,
+                on_message=displaymsg,
+            )
+            print(f"Conversa com {client} iniciada no {temp_topic}.\n")
+
+        case "accept":
+            client = recv["client"]
+            temp_topic = recv["message"]
+            print(f"Conversa com {client} iniciada no {temp_topic}.\n")
+            topics[client] = temp_topic
+            subscribe(
+                client_mqtt=mqtt_client,
+                topic=temp_topic,
+                on_message=displaymsg,
+            )
+
+        case _:
+            print(f"Erro: {recv}")

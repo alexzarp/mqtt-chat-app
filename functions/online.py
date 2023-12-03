@@ -4,7 +4,7 @@ import json
 from time import sleep
 
 
-def online(mqtt_client: mqtt_client.Client, topic="global_control", online=True):
+def online(mqtt_client: mqtt_client.Client, topic="users", online=True):
     payload = {
         "status": "online" if online else "offline",
         "user": (mqtt_client._client_id).decode("utf-8"),

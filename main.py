@@ -4,7 +4,7 @@ from terminal.terminal import Terminal
 from functions.subscribe import subscribe
 from functions.online import online
 from threading import Thread
-from handle_comunication.handle_comunication import mytopic, monitor
+from handle_comunication.handle_comunication import *
 import json
 import os
 import sys
@@ -17,7 +17,7 @@ def run():
 
     subscribe(
         client_mqtt=client_mqtt,
-        topic="global_control",
+        topic="users",
         on_message=monitor,
     )
 
@@ -25,6 +25,12 @@ def run():
         client_mqtt=client_mqtt,
         topic=(client_mqtt._client_id).decode("utf-8") + "_control",
         on_message=mytopic,
+    )
+
+    subscribe(
+        client_mqtt=client_mqtt,
+        topic="groups",
+        on_message=groups,
     )
 
     try:

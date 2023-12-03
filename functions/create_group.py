@@ -6,7 +6,7 @@ import json
 def create_group(mqtt_client: mqtt_client.Client):
     publish(
         mqtt_client,
-        "global_control",
+        "users",
         json.dumps(
             {
                 "action": "create_group",

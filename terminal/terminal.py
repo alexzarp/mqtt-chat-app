@@ -53,7 +53,7 @@ class Terminal:
                     end_conversation(self.client_mqtt)
                 case 8:
                     print("Exiting...")
-                    online(client_mqtt=self.client_mqtt, online=False)
+                    online(self.client_mqtt, online=False)
                     self.client_mqtt.loop_stop()
                     exit(1)
                 case _:
