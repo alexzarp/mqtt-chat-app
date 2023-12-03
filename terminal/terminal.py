@@ -44,7 +44,7 @@ class Terminal:
                 case 3:
                     send_message(client_mqtt=self.client_mqtt)
                 case 4:
-                    send_message_group(client_mqtt=self.client)
+                    send_message_group(client_mqtt=self.client_mqtt)
                 case 5:
                     create_group(self.client_mqtt)
                 case 6:

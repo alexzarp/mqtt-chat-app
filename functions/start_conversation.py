@@ -52,7 +52,40 @@ def send_message(client_mqtt: mqtt_client.Client):
 
 
 def send_message_group(client_mqtt: mqtt_client.Client):
-    pass
+    print("Usuarios conectados: ", end="\n")
+    print("Líder - Topic")
+
+    with open(f"data/{(client_mqtt._client_id).decode('utf-8')}_groups.json", "r") as f:
+        groups = json.load(f)
+
+    for group_id, group_info in groups.items():
+        print(f"{group_id} - {group_info['name']}")
+    print()
+
+    print("Escolha o grupo: \n>>> ", end="")
+    topic = str(input())
+    try:
+        topic = groups[topic]["name"]
+    except:
+        print(f"Usuario {topic} não encontrado")
+        return
+
+    print("Digite a mensagem: \n>>> ", end="")
+    message = str(input())
+
+    publish(
+        client_mqtt,
+        topic,
+        json.dumps(
+            {
+                "action": "message",
+                "message": message,
+                "client": (client_mqtt._client_id).decode("utf-8"),
+                "group": topic,
+            },
+        ),
+    )
+    return "stand"
 
 
 def end_conversation(client_mqtt: mqtt_client.Client):

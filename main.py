@@ -33,6 +33,8 @@ def run():
         on_message=groups_handle,
     )
 
+    susbscribe_lasts(client_mqtt)
+
     try:
         client_mqtt.loop_start()
         terminal = Terminal(client_mqtt=client_mqtt)

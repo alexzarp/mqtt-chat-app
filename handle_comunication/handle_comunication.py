@@ -149,6 +149,21 @@ def displaymsgfromgroups(mqtt_client: mqtt_client.Client, userdata, msg):
         )
 
 
+def susbscribe_lasts(client_mqtt: mqtt_client.Client):
+    import json
+
+    try:
+        with open(
+            f"data/{(client_mqtt._client_id).decode('utf-8')}_groups.json", "r"
+        ) as f:
+            lasts = json.load(f)
+    except:
+        return
+
+    for i, j in lasts.items():
+        subscribe(client_mqtt, j["name"], displaymsgfromgroups)
+
+
 def save_joined_groups(mqtt_client: mqtt_client.Client, recv):
     leader = recv["leader"]
     name = recv["name"]
