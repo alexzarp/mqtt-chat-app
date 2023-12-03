@@ -40,13 +40,14 @@ def mytopic(mqtt_client: mqtt_client.Client, userdata, msg):
 
     recv = json.loads(msg.payload.decode())
 
+    print(recv)
+
     match recv["action"]:
         case "conversation":
             client = recv["client"]
             temp_topic = (
                 (mqtt_client._client_id).decode("utf-8") + client + "_conversation"
             )
-            print(client + "_control")
 
             publish(
                 mqtt_client,
@@ -59,28 +60,24 @@ def mytopic(mqtt_client: mqtt_client.Client, userdata, msg):
                     },
                 ),
             )
-            topics.append((temp_topic, client))
+            topics[client] = temp_topic
             subscribe(
                 client_mqtt=mqtt_client,
                 topic=temp_topic,
                 on_message=displaymsg,
             )
+            print(f"Conversa com {client} iniciada no {temp_topic}.\n")
 
         case "accept":
-            print("aceitou")
             client = recv["client"]
             temp_topic = recv["message"]
-            print(f"Conversa com {client} iniciada no {temp_topic}.")
-            topics.append((temp_topic, client))
+            print(f"Conversa com {client} iniciada no {temp_topic}.\n")
+            topics[client] = temp_topic
             subscribe(
                 client_mqtt=mqtt_client,
                 topic=temp_topic,
                 on_message=displaymsg,
             )
-
-        case "exit":
-            unsubscribe(mqtt_client, recv["topic"])
-            print(f"`{recv['client']}` encerrou a conversa `{recv['message']}`")
 
         case _:
             print(f"Erro: {recv}")
@@ -117,7 +114,16 @@ def conversation(mqtt_client: mqtt_client.Client, temp_topic):
 
 def displaymsg(mqtt_client: mqtt_client.Client, userdata, msg):
     message = json.loads(msg.payload.decode())
-    if message["client"] != (mqtt_client._client_id).decode("utf-8"):
+
+    if message.get("action") == "exit":
+        unsubscribe(mqtt_client, message["topic"])
+        print(f"`{message['client']}` encerrou a conversa `{message['topic']}`")
+        topics.pop(message["client"])
+
+    if (
+        message["client"] != (mqtt_client._client_id).decode("utf-8")
+        and message.get("message") != None
+    ):
         print(
-            f"Mensagem de {(mqtt_client._client_id).decode('utf-8')}: {message['message']}"
+            f"Mensagem de {(mqtt_client._client_id).decode('utf-8')}: {message['message']}\n"
         )

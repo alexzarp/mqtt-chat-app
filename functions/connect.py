@@ -16,7 +16,7 @@ def connect_mqtt(broker: str = "localhost", port: int = 1883, id=sys.argv[1]):
                 f"Connected to MQTT Broker!\n\
 Client: {(client._client_id).decode('utf-8')}\n\
 User data: {userdata}\n\
-Flags: {flags}"
+Flags: {flags}\n"
             )
         else:
             print("Failed to connect, return code %d\n", rc)

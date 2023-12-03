@@ -48,13 +48,10 @@ class Terminal:
                 case 5:
                     pass
                 case 6:
-                    topic = input("Qual conversa deseja fechar: \n>>>")
-                    try:
-                        unsubscribe(client_mqtt=mqtt_client, topic=topic)
-                        print(f"Conversa {topic} fechada.")
-                    except:
-                        print(f"Não foi possível fechar a conversa {topic}.")
+                    pass
                 case 7:
+                    end_conversation(self.client_mqtt)
+                case 8:
                     print("Exiting...")
                     online(client_mqtt=self.client_mqtt, online=False)
                     self.client_mqtt.loop_stop()
